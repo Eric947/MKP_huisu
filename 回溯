@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int n;    //物品数量
+int m;   //物品约束条件数量
+double a[1000][1000];  //物品的属性Attribute
+double c[1000];    //约束值
+double ca[1000]={0};   //此刻的属性值
+double v[1000];  //物品价值
+double cv=0;   //此刻背包价值
+double bestv=0;//此刻的最优解决方案值
+
+void huisu(int i)
+{
+    int j;
+    if(i>=n)
+        return;//判断回溯结束的条件
+    for(j=0;j<m;j++)
+        if(ca[j]+a[i][j]>c[j])
+            return ;//不满足约束条件的结果、结束
+    for(j=0;j<m;j++)
+        ca[j]+=a[i][j];//加上此刻选择的物品的属性的总属性
+    cv+=v[i];//加上此刻选择的物品的价格的总价格
+    if(cv>bestv)
+        bestv=cv;//更新此刻的最优方案值
+    j=i+1;//选择下一个物品
+    while(j<n)
+        huisu(j++);//递归调用，对右边的节点递归下去
+    cv-=v[i];//还原价值到上一个选择的状态
+    for(j=0;j<m;j++)
+        ca[j]-=a[i][j]; //还原属性到上一个选择的状态
+    huisu(i+1);
+//	时间复杂度  = O(nm2^n)
+}
+
+int main(){
+    int i,j;
+    printf("请输入物品数量n和约束条件m的个数：");
+    scanf("%d %d",&n,&m);
+
+    printf("请输入%d个物品的价值:\n",n);
+    for(i=0;i<n;i++){
+        scanf("%lf",&v[i]);
+	}
+    for(j=0;j<m;j++){
+        printf("请输入%d个物品的第%d种属性:\n",n,j+1);             
+		for(i=0;i<n;i++){
+        scanf("%d",&a[i][j]);
+		}
+	}
+
+	printf("请输入%d个物品属性的约束条件值:\n",m);
+    for(i=0;i<m;i++){
+        scanf("%d",&c[i]);
+    }
+	huisu(0);
+    printf("最优解决方案值为：%lf\n",bestv);
+	system("PAUSE");	
+	return 0;
+
+}
